@@ -238,6 +238,9 @@ namespace RichTextControls
                 }
                 
                 var textBlock = new RichTextBlock();
+
+                //宏嘉的代码
+
                 var paragraph = new Paragraph()
                 {
                     FontFamily = new FontFamily("Consolas"),

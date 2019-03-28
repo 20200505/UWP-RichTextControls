@@ -80,5 +80,12 @@ namespace RichTextControls.ExampleApp
         {
             _debouncedParseHtml.Hit();
         }
+        
+        private void HtmlPreviewTextBlock_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var attachedFlyout = (Flyout)FlyoutBase.GetAttachedFlyout(HtmlPreviewTextBlock);
+            
+            attachedFlyout.ShowAt((RichTextBlock)sender);
+        }
     }
 }

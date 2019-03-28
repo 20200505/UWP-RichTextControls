@@ -34,7 +34,13 @@
             <richText:HtmlTextBlock 
                 x:Name="HtmlPreviewTextBlock"
                 Margin="12"
-                />
+                SelectionChanged="HtmlPreviewTextBlock_SelectionChanged">
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout>
+                        <MenuFlyoutItem Text="the SelectionChanged event works!"></MenuFlyoutItem>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+            </richText:HtmlTextBlock>
         </ScrollViewer>
 
         <CommandBar Grid.ColumnSpan="2">

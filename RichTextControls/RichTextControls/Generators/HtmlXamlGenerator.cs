@@ -126,6 +126,10 @@ namespace RichTextControls.Generators
             }
         }
 
+        //Hongjia's code
+        public delegate void OnHtmlConvertedHandler(RichTextBlock htmlXaml);
+        public OnHtmlConvertedHandler OnHtmlConverted;
+
         /// <summary>
         /// Creates <see cref="UIElement"/> elements which can be added to a <see cref="UIElementCollection"/>.
         /// </summary>
@@ -147,6 +151,11 @@ namespace RichTextControls.Generators
                 case "P":
                     var paragraph = GenerateParagraph(node as IHtmlParagraphElement);
                     lastTextBlock = GetOrCreateLastRichTextBlock(elements);
+
+                    //Hongjia's Code Starts
+                    lastTextBlock.SelectionChanged += LastTextBlock_SelectionChanged;
+                    //Hongjia's Code Ends
+
                     lastTextBlock.Blocks.Add(paragraph);
                     return lastTextBlock;
                 case "IMG":
@@ -187,6 +196,11 @@ namespace RichTextControls.Generators
                 case "H5":
                 case "H6":
                     lastTextBlock = GetOrCreateLastRichTextBlock(elements);
+
+                    //Hongjia's Code starts
+                    lastTextBlock.SelectionChanged += LastTextBlock_SelectionChanged;
+                    //Hongjia's Code ends
+
                     var headerParagraph = new Paragraph()
                     {
                         Margin = new Thickness(0, 19.5, 0, 3)
@@ -222,6 +236,37 @@ namespace RichTextControls.Generators
                     return AddInlineToTextBlock(elements, plainText);
             }
         }
+
+
+        //Hongjia's codes begin
+        /// <summary>
+        /// After the text being selected
+        /// </summary>
+        /// <remarks>Written by Hongjia</remarks>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LastTextBlock_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            SelectionChanged?.Invoke(sender, e);
+        }
+
+        //public delegate void SelectionChangedEventHandler(string selectedText);
+        private event SelectionChangedEventHandler SelectionChanged;
+
+        event Generators.SelectionChangedEventHandler IHtmlXamlGenerator.SelectionChanged
+        {
+            add
+            {
+                SelectionChanged += value;
+            }
+
+            remove
+            {
+                SelectionChanged -= value;
+            }
+        }
+
+        //Hongjia's codes end
 
         /// <summary>
         /// Loops through children of an <see cref="INode"/> and appends as <see cref="UIElement"/> to given <see cref="UIElementCollection"/>.
@@ -455,7 +500,7 @@ namespace RichTextControls.Generators
         private Inline GenerateBold(INode node)
         {
             var bold = new Bold();
-
+            
             AddInlineChildren(node, bold.Inlines);
 
             return bold;

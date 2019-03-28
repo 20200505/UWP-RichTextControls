@@ -133,6 +133,10 @@ namespace RichTextControls
             {
                 var generator = CustomGenerator ?? new HtmlXamlGenerator(Html);
 
+                //Hongjia's codes begin
+                generator.SelectionChanged += Generator_SelectionChanged;
+                //Hongjia's codes end
+
                 generator.BlockquoteBorderStyle = BlockquoteBorderStyle;
                 generator.PreformattedBorderStyle = PreformattedBorderStyle;
 
@@ -145,5 +149,16 @@ namespace RichTextControls
                 _rootElement.Child = new TextBlock() { Text = $"Unable to parse this document. The error was: {ex.Message}" };
             }
         }
+
+        private void Generator_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            SelectionChanged?.Invoke(sender, e);
+        }
+
+
+        //Hongjia's codes begin
+        public delegate void SelectionChangedEventHandler(object sender, RoutedEventArgs e);
+        public event SelectionChangedEventHandler SelectionChanged;
+        //Hongjia's codes end
     }
 }
