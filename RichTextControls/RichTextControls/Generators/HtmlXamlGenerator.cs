@@ -122,6 +122,10 @@ namespace RichTextControls.Generators
                 // so we have no default handling for it.
                 case "#text":
                 default:
+                    if(node.HasChildNodes)
+                    {
+                        return GenerateSpan(node);
+                    }
                     return GeneratePlainText(node);
             }
         }
@@ -233,6 +237,10 @@ namespace RichTextControls.Generators
                 case "#text":
                 default:
                     var plainText = GeneratePlainText(node);
+                    if (node.HasChildNodes)
+                    {
+                        return GenerateDiv(node);
+                    }
                     return AddInlineToTextBlock(elements, plainText);
             }
         }

@@ -32,6 +32,8 @@ namespace RichTextControls.Tests
         }
 
         string Html = "";
+
+        string ReaderHtml { get { return Html; } }
         public void LoadRichTextControlintoRichTextBlock()
         {
             HtmlTextBlock htmlTextBlock = new HtmlTextBlock
@@ -64,7 +66,7 @@ namespace RichTextControls.Tests
             {
                 System.Diagnostics.Debug.WriteLine(exception.Message);
             }
-
+            CodeBlock.Code = Html;
             //Convert(Html);
             Invoke(() => { ShowHtml(); });
         }
@@ -81,6 +83,17 @@ namespace RichTextControls.Tests
         public async void Invoke(Action action, Windows.UI.Core.CoreDispatcherPriority Priority = Windows.UI.Core.CoreDispatcherPriority.Normal)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Priority, () => { action(); });
+        }
+
+        private void ConverHTML_Click(object sender, RoutedEventArgs e)
+        {
+            Html = UrlBox.Text;
+            Invoke(() => { ShowHtml(); });
+        }
+
+        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            TestGrid.Width = ReaderWidthSlider.Value * 8 + 500;
         }
 
         //public string Convert(string Html)

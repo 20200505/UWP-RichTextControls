@@ -10,19 +10,33 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <ScrollViewer>
         <Grid>
-        <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="UrlBox" Width="300" HorizontalAlignment="Left" Margin="20"></TextBox>
-                <Button x:Name="ReaderSharpButton" Content="ReaderSharp" Margin="20" Click="ReaderSharpButton_Click"></Button>
-                <Button x:Name="SmartReaderButton" Content="SmartReader" Margin="20" Click="SmartReaderButton_Click"></Button>
-            </StackPanel>
-            
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="UrlBox" Width="300" HorizontalAlignment="Left" Margin="20"></TextBox>
+                    <Button x:Name="ReaderSharpButton" Content="ReaderSharp" Margin="20" Click="ReaderSharpButton_Click"></Button>
+                    <Button x:Name="ConverHTML" Content="转换HTML" Margin="20" Click="ConverHTML_Click"></Button>
+                    <Button x:Name="ShowHtmlButton" Content="显示转换后HTML">
+                        <Button.Flyout>
+                            <Flyout>
+                                <ScrollViewer Height="500" Width="500">
+                                    <richtextcontrols:CodeHighlightedTextBlock x:Name="CodeBlock" Code="{x:Bind Html}" Language="XML">
+                                    </richtextcontrols:CodeHighlightedTextBlock>
+                                </ScrollViewer>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="宽度：" Margin="10"></TextBlock>
+                        <Slider x:Name="ReaderWidthSlider" Width="200" VerticalAlignment="Center" ValueChanged="Slider_ValueChanged"/>
+                    </StackPanel>
+                </StackPanel>
+
                 <Grid  x:Name="TestGrid">
-                    <richtextcontrols:HtmlTextBlock x:Name="htmlTest" Html="{x:Bind Html}" Opacity="0"></richtextcontrols:HtmlTextBlock>
+                    <richtextcontrols:HtmlTextBlock x:Name="htmlTest" Html="{x:Bind ReaderHtml}" Opacity="0"></richtextcontrols:HtmlTextBlock>
                 </Grid>
-            
-        </StackPanel>
-    </Grid>
+
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 
 </Page>
