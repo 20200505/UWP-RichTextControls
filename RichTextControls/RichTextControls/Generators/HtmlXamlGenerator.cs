@@ -509,12 +509,18 @@ namespace RichTextControls.Generators
             {
                 var hyperlinkContainer = new InlineUIContainer();
                 var hyperlinkButton = new HyperlinkButton();
+
                 var bitmap = new BitmapImage(imageUrl);
                 Image image = new Image
                 {
                     Source = bitmap
                 };
-
+                var viewBox = new Viewbox()
+                {
+                    Stretch = Stretch.UniformToFill,
+                    StretchDirection = StretchDirection.DownOnly,
+                    Child = image
+                };
                 if (Uri.TryCreate(node.Href, UriKind.RelativeOrAbsolute, out Uri hrefUri))
                 {
                     try
@@ -526,7 +532,7 @@ namespace RichTextControls.Generators
                 }
 
                 hyperlinkContainer.Child = hyperlinkButton;
-                hyperlinkButton.Content = image;
+                hyperlinkButton.Content = viewBox;
 
                 return hyperlinkContainer;
             }

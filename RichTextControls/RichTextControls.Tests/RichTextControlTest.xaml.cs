@@ -14,7 +14,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using RichTextControls;
 using RichTextControls.RichTextBlockConverter;
-using HtmlAgilityPack;
 using System.Text;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -84,22 +83,22 @@ namespace RichTextControls.Tests
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Priority, () => { action(); });
         }
 
-        public string Convert(string Html)
-        {
-            var sb = new StringBuilder();
-            var stringWriter = new StringWriter(sb);
-            var doc = new HtmlDocument
-            {
-                OptionOutputAsXml = true,
-                OptionCheckSyntax = true,
-                OptionFixNestedTags = true,
-                OptionAutoCloseOnEnd = true,
-                OptionDefaultStreamEncoding = Encoding.UTF8
-            };
-            doc.LoadHtml(Html);
-            MemoryStream stream = new MemoryStream();
-            doc.Save(stringWriter);
-            return sb.ToString();
-        }
+        //public string Convert(string Html)
+        //{
+        //    var sb = new StringBuilder();
+        //    var stringWriter = new StringWriter(sb);
+        //    var doc = new HtmlDocument
+        //    {
+        //        OptionOutputAsXml = true,
+        //        OptionCheckSyntax = true,
+        //        OptionFixNestedTags = true,
+        //        OptionAutoCloseOnEnd = true,
+        //        OptionDefaultStreamEncoding = Encoding.UTF8
+        //    };
+        //    doc.LoadHtml(Html);
+        //    MemoryStream stream = new MemoryStream();
+        //    doc.Save(stringWriter);
+        //    return sb.ToString();
+        //}
     }
 }
