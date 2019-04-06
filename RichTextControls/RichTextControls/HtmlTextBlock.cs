@@ -124,6 +124,8 @@ namespace RichTextControls
             RenderDocument();
         }
 
+        public UIElement ParsedHtmlPanel;
+
         private void RenderDocument()
         {
             if (_rootElement == null || String.IsNullOrEmpty(Html))
@@ -140,9 +142,9 @@ namespace RichTextControls
                 generator.BlockquoteBorderStyle = BlockquoteBorderStyle;
                 generator.PreformattedBorderStyle = PreformattedBorderStyle;
 
-                var parsedHtml = generator.Generate();
+                ParsedHtmlPanel = generator.Generate();
 
-                _rootElement.Child = parsedHtml;
+                _rootElement.Child = ParsedHtmlPanel;
             }
             catch (Exception ex)
             {

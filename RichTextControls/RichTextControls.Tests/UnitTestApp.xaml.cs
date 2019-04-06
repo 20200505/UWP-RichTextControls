@@ -72,6 +72,8 @@ namespace RichTextControls.Tests
             // Ensure the current window is active
             Window.Current.Activate();
 
+            rootFrame.Navigate(typeof(RichTextControlTest));
+
             Microsoft.VisualStudio.TestPlatform.TestExecutor.UnitTestClient.Run(e.Arguments);
         }
 

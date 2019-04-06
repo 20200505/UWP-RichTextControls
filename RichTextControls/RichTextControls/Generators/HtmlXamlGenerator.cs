@@ -480,21 +480,83 @@ namespace RichTextControls.Generators
             return inlineContainer;
         }
 
+        private bool isLinkGenerating = false;
         private Inline GenerateLink(IHtmlAnchorElement node)
         {
-            var hyperlink = new Hyperlink();
-
-            if (Uri.TryCreate(node.Href, UriKind.RelativeOrAbsolute, out Uri hrefUri))
+            isLinkGenerating = true;
+            bool hasImg = false;
+            Uri imageUrl = null;
+            GoDeep(node, ref hasImg, ref imageUrl);
+            if(hasImg)
             {
-                hyperlink.NavigateUri = hrefUri;
+                var hyperlinkContainer = new InlineUIContainer();
+                var hyperlinkButton = new HyperlinkButton();
+                var bitmap = new BitmapImage(imageUrl);
+                Image image = new Image
+                {
+                    Source = bitmap
+                };
+
+                if (Uri.TryCreate(node.Href, UriKind.RelativeOrAbsolute, out Uri hrefUri))
+                {
+                    try
+                    {
+                        hyperlinkButton.NavigateUri = hrefUri;
+                    }
+                    catch (NullReferenceException)
+                    { }
+                }
+
+                hyperlinkContainer.Child = hyperlinkButton;
+                hyperlinkButton.Content = image;
+
+                return hyperlinkContainer;
+            }
+            else
+            {
+                var hyperlink = new Hyperlink();
+
+                if (Uri.TryCreate(node.Href, UriKind.RelativeOrAbsolute, out Uri hrefUri))
+                {
+                    hyperlink.NavigateUri = hrefUri;
+                }
+
+                // TODO: Add option for unfurling links as images
+                // TODO: Add link clicked event
+
+                AddInlineChildren(node, hyperlink.Inlines);
+                return hyperlink;
             }
 
-            // TODO: Add option for unfurling links as images
-            // TODO: Add link clicked event
 
-            AddInlineChildren(node, hyperlink.Inlines);
+        }
 
-            return hyperlink;
+        private void GoDeep(IHtmlAnchorElement node,  ref bool hasImg, ref Uri imageUrl)
+        {
+            if(node == null)
+            {
+                return;
+            }
+            foreach(var childNode in node.Children)
+            {
+                if(childNode.NodeName == "IMG")
+                {
+                    hasImg = true;
+                    var imageSourceUrl = childNode.Attributes["src"].Value;
+                    //IHtmlImageElement imgNode = childNode as IHtmlImageElement;
+                    Uri.TryCreate(imageSourceUrl, UriKind.RelativeOrAbsolute, out Uri hrefUri);
+                    imageUrl = hrefUri;
+                    return;
+                }
+                if (hasImg)
+                {
+                    GoDeep((IHtmlAnchorElement)childNode, ref hasImg, ref imageUrl);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         private Inline GenerateBold(INode node)

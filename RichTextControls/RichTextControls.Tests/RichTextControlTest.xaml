@@ -5,10 +5,24 @@
     xmlns:local="using:RichTextControls.Tests"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:richtextcontrols="using:RichTextControls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <Grid>
-
+    <ScrollViewer>
+        <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="UrlBox" Width="300" HorizontalAlignment="Left" Margin="20"></TextBox>
+                <Button x:Name="ReaderSharpButton" Content="ReaderSharp" Margin="20" Click="ReaderSharpButton_Click"></Button>
+                <Button x:Name="SmartReaderButton" Content="SmartReader" Margin="20" Click="SmartReaderButton_Click"></Button>
+            </StackPanel>
+            
+                <Grid  x:Name="TestGrid">
+                    <richtextcontrols:HtmlTextBlock x:Name="htmlTest" Html="{x:Bind Html}" Opacity="0"></richtextcontrols:HtmlTextBlock>
+                </Grid>
+            
+        </StackPanel>
     </Grid>
+    </ScrollViewer>
+
 </Page>
