@@ -453,20 +453,38 @@ namespace RichTextControls.Generators
             return verticalStackPanel;
         }
 
-        private Image GenerateImage(IHtmlImageElement node)
+        private FrameworkElement GenerateImage(IHtmlImageElement node)
         {
             var image = new Image()
             {
-                Stretch = Stretch.UniformToFill
+                //Stretch = Stretch.UniformToFill
             };
+
+            var viewBox = new Viewbox()
+            {
+                Stretch = Stretch.UniformToFill,
+                StretchDirection = StretchDirection.DownOnly,
+            };
+
+            viewBox.Child = image;
 
             if (Uri.TryCreate(node.Source, UriKind.RelativeOrAbsolute, out Uri src))
             {
                 var bitmap = new BitmapImage(src);
                 image.Source = bitmap;
+                //image.Width = node.DisplayWidth == 0 ? node.OriginalWidth : node.DisplayWidth;
+                //if(image.Width == 0)
+                //{
+                //    image.Width = bitmap.PixelWidth;
+                //}
+                //image.Height = node.DisplayHeight == 0 ? node.OriginalHeight : node.DisplayHeight;
+                //if(image.Height == 0)
+                //{
+                //    image.Height = bitmap.PixelHeight;
+                //}
             }
 
-            return image;
+            return viewBox;
         }
 
         private Inline GenerateInlineImage(IHtmlImageElement node)
