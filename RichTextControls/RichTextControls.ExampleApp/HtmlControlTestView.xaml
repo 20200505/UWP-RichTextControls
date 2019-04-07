@@ -34,7 +34,10 @@
             <richText:HtmlTextBlock 
                 x:Name="HtmlPreviewTextBlock"
                 Margin="12"
-                SelectionChanged="HtmlPreviewTextBlock_SelectionChanged">
+                SelectionChanged="HtmlPreviewTextBlock_SelectionChanged"
+                FontFamily="宋体"
+                FontSize="30"
+                >
                 <FlyoutBase.AttachedFlyout>
                     <Flyout>
                         <MenuFlyoutItem Text="the SelectionChanged event works!"></MenuFlyoutItem>

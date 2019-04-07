@@ -563,7 +563,7 @@ namespace RichTextControls.Generators
 
         }
 
-        private void GoDeep(IHtmlAnchorElement node,  ref bool hasImg, ref Uri imageUrl)
+        private void GoDeep(IElement node,  ref bool hasImg, ref Uri imageUrl)
         {
             if(node == null)
             {
@@ -580,13 +580,9 @@ namespace RichTextControls.Generators
                     imageUrl = hrefUri;
                     return;
                 }
-                if (hasImg)
+                if (!hasImg)
                 {
-                    GoDeep((IHtmlAnchorElement)childNode, ref hasImg, ref imageUrl);
-                }
-                else
-                {
-                    break;
+                    GoDeep(childNode, ref hasImg, ref imageUrl);
                 }
             }
         }

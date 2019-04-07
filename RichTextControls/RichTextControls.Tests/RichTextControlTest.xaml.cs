@@ -25,10 +25,35 @@ namespace RichTextControls.Tests
     /// </summary>
     public sealed partial class RichTextControlTest : Page
     {
+        public static string[] FontNames = {
+    "Arial", "Calibri", "Cambria", "Cambria Math", "Comic Sans MS", "Courier New",
+    "Ebrima", "Gadugi", "Georgia",
+    "Javanese Text Regular Fallback font for Javanese script", "Leelawadee UI",
+    "Lucida Console", "Malgun Gothic", "Microsoft Himalaya", "Microsoft JhengHei",
+    "Microsoft JhengHei UI", "Microsoft New Tai Lue", "Microsoft PhagsPa",
+    "Microsoft Tai Le", "Microsoft YaHei", "Microsoft YaHei UI",
+    "Microsoft Yi Baiti", "Mongolian Baiti", "MV Boli", "Myanmar Text",
+    "Nirmala UI", "Segoe MDL2 Assets", "Segoe Print", "Segoe UI", "Segoe UI Emoji",
+    "Segoe UI Historic", "Segoe UI Symbol", "SimSun", "Times New Roman",
+    "Trebuchet MS", "Verdana", "Webdings", "Wingdings", "Yu Gothic",
+    "Yu Gothic UI"
+};
         public RichTextControlTest()
         {
             this.InitializeComponent();
+            foreach(var font in FontNames)
+            {
+                var menuFlyoutItem = new MenuFlyoutItem() { Text = font };
+                menuFlyoutItem.Click += MenuFlyoutItem_Click;
+                FontFlyout.Items.Add(menuFlyoutItem);
+            }
+
             LoadRichTextControlintoRichTextBlock();
+        }
+
+        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            htmlTextBlock.FontFamily = new FontFamily(((MenuFlyoutItem)sender).Text);
         }
 
         string Html = "";
@@ -43,13 +68,14 @@ namespace RichTextControls.Tests
             htmlTest = htmlTextBlock;
         }
 
+        HtmlTextBlock htmlTextBlock;
         private void ShowHtml()
         {
             //TestGrid.Children.Remove(htmlTest);
             TestGrid.Children.Clear();
             Html2RichTextBlock html2RichTextBlock = new Html2RichTextBlock(Html);
             RichTextBlock richTextBlock = html2RichTextBlock.ConvertToRichTextBlock();
-            HtmlTextBlock htmlTextBlock = new HtmlTextBlock { Html = Html };
+            htmlTextBlock = new HtmlTextBlock { Html = Html };
             TestGrid.Children.Add(htmlTextBlock);
         }
 
@@ -62,7 +88,7 @@ namespace RichTextControls.Tests
                 var readerSharpArticle = await reader.Read(new Uri(url));
                 Html = readerSharpArticle.Content;
             }
-            catch(UriFormatException exception)
+            catch (UriFormatException exception)
             {
                 System.Diagnostics.Debug.WriteLine(exception.Message);
             }
@@ -94,6 +120,11 @@ namespace RichTextControls.Tests
         private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             TestGrid.Width = ReaderWidthSlider.Value * 8 + 500;
+        }
+
+        private void FontSizeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            htmlTextBlock.FontSize = (FontSizeSlider.Value + 10) / 2;
         }
 
         //public string Convert(string Html)
