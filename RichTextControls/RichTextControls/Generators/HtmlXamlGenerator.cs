@@ -67,11 +67,11 @@ namespace RichTextControls.Generators
 
             _document = _document ?? _parser.Parse(_html);
 
-            var panel = new StackPanel();
+            var richTextBlock = new RichTextBlock();
 
-            AddChildren(_document.Body, panel.Children);
+            AddChildren(_document.Body, richTextBlock.Children);
 
-            return panel;
+            return richTextBlock;
         }
 
         /// <summary>
@@ -140,9 +140,9 @@ namespace RichTextControls.Generators
         /// <param name="node">The <see cref="INode"/> to generate the <see cref="UIElement"/> from.</param>
         /// <param name="elements">The <see cref="UIElementCollection"/> of the parent element.</param>
         /// <returns>The <see cref="UIElement"/> to be appended to the parent.</returns>
-        protected virtual UIElement GenerateUIElementForNode(INode node, UIElementCollection elements)
+        protected virtual Block GenerateBlockForNode(INode node, BlockCollection elements)
         {
-            RichTextBlock lastTextBlock = null;
+            Block lastBlock = null;
             switch (node.NodeName)
             {
                 case "S":
@@ -154,14 +154,14 @@ namespace RichTextControls.Generators
                 case "LI": // Treat <li> outside of a <ul> or <ol> as regular Paragraph.
                 case "P":
                     var paragraph = GenerateParagraph(node as IHtmlParagraphElement);
-                    lastTextBlock = GetOrCreateLastRichTextBlock(elements);
+                    lastBlock = GetOrCreateLastRichTextBlock(elements);
 
                     //Hongjia's Code Starts
-                    lastTextBlock.SelectionChanged += LastTextBlock_SelectionChanged;
+                    lastBlock.SelectionChanged += LastTextBlock_SelectionChanged;
                     //Hongjia's Code Ends
 
-                    lastTextBlock.Blocks.Add(paragraph);
-                    return lastTextBlock;
+                    lastBlock.Blocks.Add(paragraph);
+                    return lastBlock;
                 case "IMG":
                     return GenerateImage(node as IHtmlImageElement);
                 case "A":
@@ -199,10 +199,10 @@ namespace RichTextControls.Generators
                 case "H4":
                 case "H5":
                 case "H6":
-                    lastTextBlock = GetOrCreateLastRichTextBlock(elements);
+                    lastBlock = GetOrCreateLastRichTextBlock(elements);
 
                     //Hongjia's Code starts
-                    lastTextBlock.SelectionChanged += LastTextBlock_SelectionChanged;
+                    lastBlock.SelectionChanged += LastTextBlock_SelectionChanged;
                     //Hongjia's Code ends
 
                     var headerParagraph = new Paragraph()
@@ -211,8 +211,8 @@ namespace RichTextControls.Generators
                     };
                     var header = GenerateHeader(node);
                     headerParagraph.Inlines.Add(header);
-                    lastTextBlock.Blocks.Add(headerParagraph);
-                    return lastTextBlock;
+                    lastBlock.Blocks.Add(headerParagraph);
+                    return lastBlock;
                 case "UL":
                     return GenerateUL(node as IHtmlUnorderedListElement);
                 case "OL":
@@ -281,11 +281,11 @@ namespace RichTextControls.Generators
         /// </summary>
         /// <param name="node">The parent <see cref="INode"/>.</param>
         /// <param name="elements">The <see cref="UIElementCollection"/> collection to add elements to.</param>
-        protected void AddChildren(INode node, UIElementCollection elements)
+        protected void AddChildren(INode node, BlockCollection elements)
         {
             foreach (var child in node.ChildNodes)
             {
-                var element = GenerateUIElementForNode(child, elements);
+                var element = GenerateBlockForNode(child, elements);
 
                 if (elements.LastOrDefault() != element)
                     elements.Add(element);
@@ -309,22 +309,22 @@ namespace RichTextControls.Generators
         }
 
         /// <summary>
-        /// Given a <see cref="UIElementCollection"/>, appends the given <see cref="Inline"/> to a <see cref="Paragraph"/>.
+        /// Given a <see cref="BlockCollection"/>, appends the given <see cref="Inline"/> to a <see cref="Paragraph"/>.
         /// </summary>
-        /// <param name="elements">The <see cref="UIElementCollection"/> collection to add elements to.</param>
+        /// <param name="blocks">The <see cref="BlockCollection"/> collection to add elements to.</param>
         /// <param name="inline">The <see cref="Inline"/> to add to the collection.</param>
         /// <param name="paragraph">The <see cref="Paragraph"/> to add. Will get from collection or create one if none provided using <see cref="GetOrCreateLastParagraph(BlockCollection)"/>.</param>
         /// <returns></returns>
-        protected UIElement AddInlineToTextBlock(UIElementCollection elements, Inline inline, Paragraph paragraph = null)
+        protected Block AddInlineToTextBlock(BlockCollection blocks, Inline inline, Paragraph paragraph = null)
         {
-            var lastTextBlock = GetOrCreateLastRichTextBlock(elements);
-            paragraph = paragraph ?? GetOrCreateLastParagraph(lastTextBlock.Blocks);
+            //var lastTextBlock = GetOrCreateLastRichTextBlock(elements);
+            paragraph = paragraph ?? GetOrCreateLastParagraph(blocks);
             paragraph.Inlines.Add(inline);
 
-            if (lastTextBlock.Blocks.LastOrDefault() != paragraph)
-                lastTextBlock.Blocks.Add(paragraph);
+            //if (blocks.LastOrDefault() != paragraph)
+            //    blocks.Add(paragraph);
 
-            return lastTextBlock;
+            return paragraph;
         }
 
         /// <summary>
