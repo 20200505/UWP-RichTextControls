@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichTextControls.Tests", "R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichTextControls.RichTextBlockConverter", "RichTextControls.RichTextBlockConverter\RichTextControls.RichTextBlockConverter.csproj", "{268C54E2-92E8-4014-8D5E-E22124CF31DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Html2XHtml", "Html2XHtml\Html2XHtml.csproj", "{737622CD-6908-4913-98E4-0675E7D9CFC9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,25 +109,6 @@ Global
 		{268C54E2-92E8-4014-8D5E-E22124CF31DC}.Release|x64.Build.0 = Release|x64
 		{268C54E2-92E8-4014-8D5E-E22124CF31DC}.Release|x86.ActiveCfg = Release|x86
 		{268C54E2-92E8-4014-8D5E-E22124CF31DC}.Release|x86.Build.0 = Release|x86
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|ARM.Build.0 = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|x64.Build.0 = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Debug|x86.Build.0 = Debug|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|ARM.ActiveCfg = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|ARM.Build.0 = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|ARM64.Build.0 = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|x64.ActiveCfg = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|x64.Build.0 = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|x86.ActiveCfg = Release|Any CPU
-		{737622CD-6908-4913-98E4-0675E7D9CFC9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

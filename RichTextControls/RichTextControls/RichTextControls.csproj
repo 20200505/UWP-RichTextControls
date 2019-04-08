@@ -128,6 +128,7 @@
     <Compile Include="Lexer\Token.cs" />
     <Compile Include="Lexer\Tokenizer.cs" />
     <Compile Include="Lexer\TokenType.cs" />
+    <Compile Include="RichTextBlockProperties.cs" />
     <EmbeddedResource Include="Properties\RichTextControls.rd.xml" />
   </ItemGroup>
   <ItemGroup>

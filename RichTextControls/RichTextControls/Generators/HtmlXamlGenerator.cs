@@ -306,7 +306,8 @@ namespace RichTextControls.Generators
             Stack<INode> nodeStack = new Stack<INode>();
 
             //Initialize queue
-            foreach (var childNode in node.ChildNodes)
+            var childNodesinReverseOrder = node.ChildNodes.Reverse();
+            foreach (var childNode in childNodesinReverseOrder)
             {
                 nodeStack.Push(childNode);
             }
@@ -316,7 +317,8 @@ namespace RichTextControls.Generators
                 var topNode = nodeStack.Pop();
                 if (IsCustomizeOrDivTag(topNode))
                 {
-                    foreach (var childNode in topNode.ChildNodes)
+                    var reversedNodes = topNode.ChildNodes.Reverse();
+                    foreach (var childNode in reversedNodes)
                     {
                         nodeStack.Push(childNode);
                     }

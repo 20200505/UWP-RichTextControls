@@ -10,39 +10,45 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <ScrollViewer>
         <Grid>
+            
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="UrlBox" Width="300" HorizontalAlignment="Left" Margin="20"></TextBox>
-                    <Button x:Name="ReaderSharpButton" Content="ReaderSharp" Margin="20" Click="ReaderSharpButton_Click"></Button>
-                    <Button x:Name="ConverHTML" Content="转换HTML" Margin="20" Click="ConverHTML_Click"></Button>
-                    <Button x:Name="ShowHtmlButton" Content="显示转换后HTML">
-                        <Button.Flyout>
-                            <Flyout>
-                                <ScrollViewer Height="500" Width="500">
-                                    <richtextcontrols:CodeHighlightedTextBlock x:Name="CodeBlock" Code="{x:Bind Html}" Language="XML">
-                                    </richtextcontrols:CodeHighlightedTextBlock>
-                                </ScrollViewer>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="宽度：" Margin="10"></TextBlock>
-                        <Slider x:Name="ReaderWidthSlider" Width="200" VerticalAlignment="Center" ValueChanged="Slider_ValueChanged"/>
+                <Viewbox StretchDirection="DownOnly">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="UrlBox" Width="115" HorizontalAlignment="Left" Margin="20,20,0,20" VerticalAlignment="Stretch"></TextBox>
+                        <Button x:Name="ReaderSharpButton" Content="ReaderSharp" Margin="20" Click="ReaderSharpButton_Click"></Button>
+                        <Button x:Name="ShowHtmlButton" Content="显示转换后HTML">
+                            <Button.Flyout>
+                                <Flyout>
+                                    <ScrollViewer Height="500" Width="500">
+                                        <richtextcontrols:CodeHighlightedTextBlock x:Name="CodeBlock" Code="{x:Bind Html}" Language="XML">
+                                        </richtextcontrols:CodeHighlightedTextBlock>
+                                    </ScrollViewer>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                        <Viewbox >
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="宽度：" Margin="10"></TextBlock>
+                                    <Slider x:Name="ReaderWidthSlider" Width="200" VerticalAlignment="Center" ValueChanged="Slider_ValueChanged"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="字体大小：" Margin="10"></TextBlock>
+                                    <Slider x:Name="FontSizeSlider" Width="200" VerticalAlignment="Center" ValueChanged="FontSizeSlider_ValueChanged"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Viewbox>
+                        <DropDownButton x:Name="FontButton" Content="字体" Margin="30, 0, 0, 0">
+                            <DropDownButton.Flyout>
+                                <MenuFlyout x:Name="FontFlyout" >
+                                </MenuFlyout>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="宽度：" Margin="10"></TextBlock>
-                        <Slider x:Name="FontSizeSlider" Width="200" VerticalAlignment="Center" ValueChanged="FontSizeSlider_ValueChanged"/>
-                    </StackPanel>
-                    <DropDownButton x:Name="FontButton" Content="字体" Margin="30, 0, 0, 0">
-                        <DropDownButton.Flyout>
-                            <MenuFlyout x:Name="FontFlyout" >
-                            </MenuFlyout>
-                        </DropDownButton.Flyout>
-                    </DropDownButton>
-                </StackPanel>
-
+                </Viewbox>
                 <Grid  x:Name="TestGrid">
-                    <richtextcontrols:HtmlTextBlock x:Name="htmlTest" Html="{x:Bind ReaderHtml}" Opacity="0"></richtextcontrols:HtmlTextBlock>
+                    <!--<richtextcontrols:HtmlTextBlock x:Name="htmlTest" Html="{x:Bind ReaderHtml}" Opacity="0"></richtextcontrols:HtmlTextBlock>-->
+                    <RichTextBlock x:Name="htmlTest" richtextcontrols:Properties.Html="{x:Bind Html}" x:DefaultBindMode="TwoWay"></RichTextBlock>
                 </Grid>
 
             </StackPanel>
