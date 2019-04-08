@@ -387,12 +387,25 @@ namespace RichTextControls.Generators
         /// <param name="inlines">The <see cref="InlineCollection"/> collection to add inlines to.</param>
         protected void AddInlineChildren(INode node, InlineCollection inlines)
         {
+            bool isInDiv = false;
+            if(node.NodeName == "DIV")
+            {
+                isInDiv = true;
+            }
+            if(isInDiv)
+            {
+                inlines.Add(new LineBreak());
+            }
             foreach (var child in node.ChildNodes)
             {
                 var inline = GenerateInlineForNode(child, inlines);
 
                 if (inlines.LastOrDefault() != inline)
                     inlines.Add(inline);
+            }
+            if(isInDiv)
+            {
+                inlines.Add(new LineBreak());
             }
         }
 
@@ -405,8 +418,8 @@ namespace RichTextControls.Generators
         /// <returns></returns>
         protected Block AddInlineToTextBlock(BlockCollection blocks, Inline inline, Paragraph paragraph = null)
         {
-            //var lastTextBlock = GetOrCreateLastRichTextBlock(elements);
-            paragraph = paragraph ?? GetOrCreateLastParagraph(blocks);
+            //paragraph = paragraph ?? GetOrCreateLastParagraph(blocks);
+            paragraph = paragraph ?? new Paragraph();
             paragraph.Inlines.Add(inline);
 
             //if (blocks.LastOrDefault() != paragraph)
@@ -491,9 +504,7 @@ namespace RichTextControls.Generators
         private Paragraph GenerateParagraph(IHtmlParagraphElement node)
         {
             var paragraph = new Paragraph();
-
             AddInlineChildren(node, paragraph.Inlines);
-
             return paragraph;
         }
 
@@ -527,7 +538,7 @@ namespace RichTextControls.Generators
                 //ulParagraph.Children.Add(horizontalStackPanel);
                 ulParagraph.Inlines.Add(new LineBreak());
             }
-
+            ulParagraph.Inlines.RemoveAt(ulParagraph.Inlines.Count - 1); //Delete Last LineBreak (Because this is a block, means next content will start in another line anyway, so one more LineBreak makes one more line spacing.)
             return ulParagraph;
         }
 
