@@ -69,7 +69,7 @@ namespace RichTextControls.Generators
 
             var richTextBlock = new RichTextBlock();
 
-            AddChildren(_document.Body, richTextBlock.Children);
+            AddChildren(_document.Body, richTextBlock.Blocks);
 
             return richTextBlock;
         }
@@ -122,7 +122,7 @@ namespace RichTextControls.Generators
                 // so we have no default handling for it.
                 case "#text":
                 default:
-                    if(node.HasChildNodes)
+                    if (node.HasChildNodes)
                     {
                         return GenerateSpan(node);
                     }
@@ -149,26 +149,27 @@ namespace RichTextControls.Generators
                 case "STRIKE":
                     var strike = GenerateStrike(node);
                     return AddInlineToTextBlock(elements, strike);
-                case "DIV":
-                    return GenerateDiv(node);
                 case "LI": // Treat <li> outside of a <ul> or <ol> as regular Paragraph.
                 case "P":
                     var paragraph = GenerateParagraph(node as IHtmlParagraphElement);
-                    lastBlock = GetOrCreateLastRichTextBlock(elements);
-
-                    //Hongjia's Code Starts
-                    lastBlock.SelectionChanged += LastTextBlock_SelectionChanged;
-                    //Hongjia's Code Ends
-
-                    lastBlock.Blocks.Add(paragraph);
-                    return lastBlock;
+                    return paragraph;
                 case "IMG":
-                    return GenerateImage(node as IHtmlImageElement);
+                    Paragraph imgParagraph = new Paragraph();
+                    InlineUIContainer inlineUIContainer = new InlineUIContainer();
+                    inlineUIContainer.Child = GenerateImage(node as IHtmlImageElement);
+                    imgParagraph.Inlines.Add(inlineUIContainer);
+                    return imgParagraph;
                 case "A":
                     var link = GenerateLink(node as IHtmlAnchorElement);
                     return AddInlineToTextBlock(elements, link);
                 case "BLOCKQUOTE":
-                    return GenerateBlockQuote(node);
+                    var blockquoteContainer = new InlineUIContainer()
+                    {
+                        Child = GenerateBlockQuote(node)
+                    };
+                    var blockquoteParagraph = new Paragraph();
+                    blockquoteParagraph.Inlines.Add(blockquoteContainer);
+                    return blockquoteParagraph;
                 case "STRONG":
                 case "B":
                     var bold = GenerateBold(node);
@@ -192,27 +193,27 @@ namespace RichTextControls.Generators
                     var span = GenerateSpan(node);
                     return AddInlineToTextBlock(elements, span);
                 case "IFRAME":
-                    return GenerateIframe(node as IHtmlInlineFrameElement);
+                    var iframeContainer = new InlineUIContainer()
+                    {
+                        Child = GenerateIframe(node as IHtmlInlineFrameElement)
+                    };
+                    var iframeParagraph = new Paragraph();
+                    iframeParagraph.Inlines.Add(iframeContainer);
+                    return iframeParagraph;
                 case "H1":
                 case "H2":
                 case "H3":
                 case "H4":
                 case "H5":
                 case "H6":
-                    lastBlock = GetOrCreateLastRichTextBlock(elements);
-
-                    //Hongjia's Code starts
-                    lastBlock.SelectionChanged += LastTextBlock_SelectionChanged;
-                    //Hongjia's Code ends
-
+                    //lastBlock = GetOrCreateLastRichTextBlock(elements);
                     var headerParagraph = new Paragraph()
                     {
                         Margin = new Thickness(0, 19.5, 0, 3)
                     };
                     var header = GenerateHeader(node);
                     headerParagraph.Inlines.Add(header);
-                    lastBlock.Blocks.Add(headerParagraph);
-                    return lastBlock;
+                    return headerParagraph;
                 case "UL":
                     return GenerateUL(node as IHtmlUnorderedListElement);
                 case "OL":
@@ -221,7 +222,13 @@ namespace RichTextControls.Generators
                     var code = GenerateCode(node);
                     return AddInlineToTextBlock(elements, code);
                 case "PRE":
-                    return GeneratePreformatted(node as IHtmlPreElement);
+                    var preInlineContainer = new InlineUIContainer()
+                    {
+                        Child = GeneratePreformatted(node as IHtmlPreElement)
+                    };
+                    var preParagraph = new Paragraph();
+                    preParagraph.Inlines.Add(preInlineContainer);
+                    return preParagraph;
                 case "Q":
                     var quote = GenerateQuote(node as IHtmlQuoteElement);
                     return AddInlineToTextBlock(elements, quote);
@@ -237,10 +244,6 @@ namespace RichTextControls.Generators
                 case "#text":
                 default:
                     var plainText = GeneratePlainText(node);
-                    if (node.HasChildNodes)
-                    {
-                        return GenerateDiv(node);
-                    }
                     return AddInlineToTextBlock(elements, plainText);
             }
         }
@@ -283,12 +286,95 @@ namespace RichTextControls.Generators
         /// <param name="elements">The <see cref="UIElementCollection"/> collection to add elements to.</param>
         protected void AddChildren(INode node, BlockCollection elements)
         {
-            foreach (var child in node.ChildNodes)
+            var nodeQueue = UnfoldTagToCollection(node);
+            foreach (var child in nodeQueue)
             {
                 var element = GenerateBlockForNode(child, elements);
 
                 if (elements.LastOrDefault() != element)
                     elements.Add(element);
+            }
+        }
+
+        /// <summary>
+        /// 展开那些布局用的标签
+        /// </summary>
+        /// <param name="node"></param>
+        protected Queue<INode> UnfoldTagToCollection(INode node)
+        {
+            Queue<INode> nodeQueue = new Queue<INode>();
+            Stack<INode> nodeStack = new Stack<INode>();
+
+            //Initialize queue
+            foreach (var childNode in node.ChildNodes)
+            {
+                nodeStack.Push(childNode);
+            }
+
+            do
+            {
+                var topNode = nodeStack.Pop();
+                if (IsCustomizeOrDivTag(topNode))
+                {
+                    foreach (var childNode in topNode.ChildNodes)
+                    {
+                        nodeStack.Push(childNode);
+                    }
+                }
+                else
+                {
+                    nodeQueue.Enqueue(topNode);
+                }
+            } while (nodeStack.Count != 0);
+            return nodeQueue;
+        }
+
+        /// <summary>
+        /// 检测节点是否是布局用的节点
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        private bool IsCustomizeOrDivTag(INode node)
+        {
+            switch (node.NodeName)
+            {
+                case "S":
+                case "STRIKE":
+                case "LI": // Treat <li> outside of a <ul> or <ol> as regular Paragraph.
+                case "P":
+                case "IMG":
+                case "A":
+                case "BLOCKQUOTE":
+                case "STRONG":
+                case "B":
+                case "I":
+                case "EM":
+                case "CITE":
+                case "INS":
+                case "U":
+                case "HR":
+                case "BR":
+                case "SPAN":
+                case "IFRAME":
+                case "H1":
+                case "H2":
+                case "H3":
+                case "H4":
+                case "H5":
+                case "H6":
+                case "UL":
+                case "OL":
+                case "CODE":
+                case "PRE":
+                case "Q":
+                case "ABBR":
+                case "MARK":
+                case "SMALL":
+                    return false;
+                case "#text":
+                case "DIV":
+                default:
+                    return true;
             }
         }
 
@@ -391,14 +477,14 @@ namespace RichTextControls.Generators
             return paragraph;
         }
 
-        private StackPanel GenerateDiv(INode node)
-        {
-            var stackPanel = new StackPanel();
+        //private StackPanel GenerateDiv(INode node)
+        //{
+        //    var stackPanel = new StackPanel();
 
-            AddChildren(node, stackPanel.Children);
+        //    AddChildren(node, stackPanel.Children);
 
-            return stackPanel;
-        }
+        //    return stackPanel;
+        //}
 
         private Paragraph GenerateParagraph(IHtmlParagraphElement node)
         {
@@ -409,34 +495,43 @@ namespace RichTextControls.Generators
             return paragraph;
         }
 
-        private StackPanel GenerateUL(IHtmlUnorderedListElement node)
+        private Block GenerateUL(IHtmlUnorderedListElement node)
         {
-            var verticalStackPanel = new StackPanel();
+            var ulParagraph = new Paragraph()
+            {
+                LineHeight = 3,
+                Margin = new Thickness(0, 3, 0, 3)
+            };
 
             foreach (var child in node.ChildNodes)
             {
                 if (String.IsNullOrWhiteSpace(child.TextContent))
                     continue;
 
-                var horizontalStackPanel = new StackPanel() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 3, 0, 3) };
-                horizontalStackPanel.Children.Add(new TextBlock() { Text = "•", Margin = new Thickness(9.5, 0, 9.5, 0) });
+                var liInlineContainer = new InlineUIContainer();
+                var dot = new TextBlock() { Text = "•", Margin = new Thickness(9.5, 0, 9.5, 0) };
+                liInlineContainer.Child = dot;
+                ulParagraph.Inlines.Add(liInlineContainer); //添加"•"
 
-                var richTextBlock = new RichTextBlock();
-                var paragraph = new Paragraph();
+                //var horizontalStackPanel = new StackPanel() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 3, 0, 3) };
+                //horizontalStackPanel.Children.Add(new TextBlock() { Text = "•", Margin = new Thickness(9.5, 0, 9.5, 0) });
 
-                AddInlineChildren(child, paragraph.Inlines);
+                //var richTextBlock = new RichTextBlock();
 
-                richTextBlock.Blocks.Add(paragraph);
-                horizontalStackPanel.Children.Add(richTextBlock);
-                verticalStackPanel.Children.Add(horizontalStackPanel);
+                AddInlineChildren(child, ulParagraph.Inlines);
+
+                //richTextBlock.Blocks.Add(paragraph);
+                //horizontalStackPanel.Children.Add(richTextBlock);
+                //ulParagraph.Children.Add(horizontalStackPanel);
+                ulParagraph.Inlines.Add(new LineBreak());
             }
 
-            return verticalStackPanel;
+            return ulParagraph;
         }
 
-        private StackPanel GenerateOL(IHtmlOrderedListElement node)
+        private Block GenerateOL(IHtmlOrderedListElement node)
         {
-            var verticalStackPanel = new StackPanel();
+            var olParagraph = new Paragraph();
 
             int number = node.Start;
             foreach (var child in node.ChildNodes)
@@ -444,21 +539,18 @@ namespace RichTextControls.Generators
                 if (String.IsNullOrWhiteSpace(child.TextContent))
                     continue;
 
-                var horizontalStackPanel = new StackPanel() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 3, 0, 3) };
-                horizontalStackPanel.Children.Add(new TextBlock() { Text = $"{number}.", Margin = new Thickness(9.5, 0, 9.5, 0) });
-                number++;
+                var liInlineContainer = new InlineUIContainer();
+                var dot = new TextBlock() { Text = $"{number}.", Margin = new Thickness(9.5, 0, 9.5, 0) };
+                liInlineContainer.Child = dot;
+                olParagraph.Inlines.Add(liInlineContainer); //添加"•"
+                ++number;
 
-                var richTextBlock = new RichTextBlock();
-                var paragraph = new Paragraph();
+                AddInlineChildren(child, olParagraph.Inlines);
 
-                AddInlineChildren(child, paragraph.Inlines);
-
-                richTextBlock.Blocks.Add(paragraph);
-                horizontalStackPanel.Children.Add(richTextBlock);
-                verticalStackPanel.Children.Add(horizontalStackPanel);
+                olParagraph.Inlines.Add(new LineBreak());
             }
 
-            return verticalStackPanel;
+            return olParagraph;
         }
 
         private FrameworkElement GenerateImage(IHtmlImageElement node)
@@ -513,7 +605,7 @@ namespace RichTextControls.Generators
             bool hasImg = false;
             Uri imageUrl = null;
             GoDeep(node, ref hasImg, ref imageUrl);
-            if(hasImg)
+            if (hasImg)
             {
                 var hyperlinkContainer = new InlineUIContainer();
                 var hyperlinkButton = new HyperlinkButton();
@@ -563,15 +655,15 @@ namespace RichTextControls.Generators
 
         }
 
-        private void GoDeep(IElement node,  ref bool hasImg, ref Uri imageUrl)
+        private void GoDeep(IElement node, ref bool hasImg, ref Uri imageUrl)
         {
-            if(node == null)
+            if (node == null)
             {
                 return;
             }
-            foreach(var childNode in node.Children)
+            foreach (var childNode in node.Children)
             {
-                if(childNode.NodeName == "IMG")
+                if (childNode.NodeName == "IMG")
                 {
                     hasImg = true;
                     var imageSourceUrl = childNode.Attributes["src"].Value;
@@ -590,7 +682,7 @@ namespace RichTextControls.Generators
         private Inline GenerateBold(INode node)
         {
             var bold = new Bold();
-            
+
             AddInlineChildren(node, bold.Inlines);
 
             return bold;
@@ -842,10 +934,12 @@ namespace RichTextControls.Generators
 
         private UIElement GenerateBlockQuote(INode node)
         {
+            RichTextBlock blockquoteRichTextBlock = new RichTextBlock();
+            AddChildren(node, blockquoteRichTextBlock.Blocks);
             var border = new Border()
             {
                 Style = BlockquoteBorderStyle,
-                Child = GenerateDiv(node),
+                Child = blockquoteRichTextBlock
             };
 
             return border;
@@ -919,7 +1013,7 @@ namespace RichTextControls.Generators
             string clean = WebUtility.HtmlDecode(input);
             if (clean == "\0")
                 clean = "\n";
-            
+
             return clean;
         }
     }

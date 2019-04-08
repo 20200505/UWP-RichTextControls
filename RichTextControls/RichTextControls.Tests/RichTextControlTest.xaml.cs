@@ -73,8 +73,8 @@ namespace RichTextControls.Tests
         {
             //TestGrid.Children.Remove(htmlTest);
             TestGrid.Children.Clear();
-            Html2RichTextBlock html2RichTextBlock = new Html2RichTextBlock(Html);
-            RichTextBlock richTextBlock = html2RichTextBlock.ConvertToRichTextBlock();
+            //Html2RichTextBlock html2RichTextBlock = new Html2RichTextBlock(Html);
+            //RichTextBlock richTextBlock = html2RichTextBlock.ConvertToRichTextBlock();
             htmlTextBlock = new HtmlTextBlock { Html = Html };
             TestGrid.Children.Add(htmlTextBlock);
         }
