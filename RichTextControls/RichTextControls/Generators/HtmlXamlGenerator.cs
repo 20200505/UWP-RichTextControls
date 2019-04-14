@@ -60,6 +60,7 @@ namespace RichTextControls.Generators
         /// </summary>
         /// <returns>A <see cref="UIElement"/> representing the HTML.</returns>
         /// <exception cref="InvalidOperationException">Thrown when no parser is detected. Typically occurs when subclassed without calling base constructor.</exception>
+        private RichTextBlock richTextBlock;
         public UIElement Generate()
         {
             if (_parser == null && _document == null)
@@ -67,7 +68,7 @@ namespace RichTextControls.Generators
 
             _document = _document ?? _parser.Parse(_html);
 
-            var richTextBlock = new RichTextBlock();
+            richTextBlock = new RichTextBlock();
 
             AddChildren(_document.Body, richTextBlock.Blocks);
 
@@ -161,7 +162,24 @@ namespace RichTextControls.Generators
                     return imgParagraph;
                 case "A":
                     var link = GenerateLink(node as IHtmlAnchorElement);
-                    return AddInlineToTextBlock(elements, link);
+                    bool treatAsInlineLink = false;
+                    var previousNode = node.PreviousSibling;
+                    if(previousNode is IHtmlParagraphElement)
+                    {
+                        if((previousNode as IHtmlParagraphElement).HasAttribute("style") 
+                            && (previousNode as IHtmlParagraphElement).Attributes["style"].Value == "display: inline;")
+                        {
+                            treatAsInlineLink = true;
+                        }
+                    }
+                    if(treatAsInlineLink)
+                    {
+                        return AddInlineToTextBlock(elements, link, GetOrCreateLastParagraph(elements));
+                    }
+                    else
+                    {
+                        return AddInlineToTextBlock(elements, link);
+                    }
                 case "BLOCKQUOTE":
                     var blockquoteContainer = new InlineUIContainer()
                     {
@@ -503,8 +521,22 @@ namespace RichTextControls.Generators
 
         private Paragraph GenerateParagraph(IHtmlParagraphElement node)
         {
-            var paragraph = new Paragraph();
-            AddInlineChildren(node, paragraph.Inlines);
+            Paragraph paragraph = null;
+            string attributeStyle = null;
+            if (node.HasAttribute("style"))
+            {
+                attributeStyle = node.Attributes["style"].Value;
+            }
+            if (attributeStyle == "display: inline;")
+            {
+                paragraph = GetOrCreateLastParagraph(richTextBlock.Blocks);
+                AddInlineChildren(node, paragraph.Inlines);
+            }
+            else
+            {
+                paragraph = new Paragraph();
+                AddInlineChildren(node, paragraph.Inlines);
+            }
             return paragraph;
         }
 
