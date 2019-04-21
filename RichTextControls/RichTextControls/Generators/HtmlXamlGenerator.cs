@@ -166,11 +166,12 @@ namespace RichTextControls.Generators
                     var previousNode = node.PreviousSibling;
                     if(previousNode is IHtmlParagraphElement)
                     {
-                        if((previousNode as IHtmlParagraphElement).HasAttribute("style") 
-                            && (previousNode as IHtmlParagraphElement).Attributes["style"].Value == "display: inline;")
-                        {
-                            treatAsInlineLink = true;
-                        }
+                        //if((previousNode as IHtmlParagraphElement).HasAttribute("style") 
+                        //    && (previousNode as IHtmlParagraphElement).Attributes["style"].Value == "display: inline;")
+                        //{
+                        //    treatAsInlineLink = true;
+                        //}
+                        treatAsInlineLink = true;
                     }
                     if(treatAsInlineLink)
                     {
@@ -335,7 +336,31 @@ namespace RichTextControls.Generators
                 var topNode = nodeStack.Pop();
                 if (IsCustomizeOrDivTag(topNode))
                 {
+                    //若是DIV的第一个，则必须要注释换行！
+                    if (topNode.NodeName == "DIV")
+                    {
+                        if (topNode.ChildNodes.FirstOrDefault() is IHtmlElement)
+                        {
+                            string attributeStyle = null;
+                            IHtmlElement paragraphElement = (IHtmlElement)topNode.ChildNodes.FirstOrDefault();
+                            paragraphElement.ClassName = "FirstInDiv";
+                        }
+                        if(topNode.ChildNodes.LastOrDefault() is IHtmlElement)
+                        {
+                            IHtmlElement paragraphElement = (IHtmlElement)topNode.ChildNodes.LastOrDefault();
+                            if (paragraphElement.ClassName != "FirstInDiv")
+                            {
+                                paragraphElement.ClassName = "LastInDiv";
+                            }
+                            else
+                            {
+                                paragraphElement.ClassName = "FirstAndLastInDiv";
+                            }
+                        }
+                    }
+
                     var reversedNodes = topNode.ChildNodes.Reverse();
+
                     foreach (var childNode in reversedNodes)
                     {
                         nodeStack.Push(childNode);
@@ -343,9 +368,27 @@ namespace RichTextControls.Generators
                 }
                 else
                 {
+                    if(nodeQueue.LastOrDefault() is IHtmlElement && topNode is IHtmlElement)
+                    {
+                        var preNode = nodeQueue.LastOrDefault() as IHtmlElement;
+                        var htmlNode = topNode as IHtmlElement;
+                        if(preNode.ClassName == "LastInDiv" || preNode.ClassName =="FirstAndLastInDiv")
+                        {
+                            if (htmlNode.ClassName == "LastInDiv")
+                            {
+                                htmlNode.ClassName = "FirstAndLastInDiv";
+                            }
+                            else
+                            {
+                                htmlNode.ClassName = "FirstInDiv";
+                            }
+                        }
+                    }
+
                     nodeQueue.Enqueue(topNode);
                 }
             } while (nodeStack.Count != 0);
+
             return nodeQueue;
         }
 
@@ -390,8 +433,8 @@ namespace RichTextControls.Generators
                 case "ABBR":
                 case "MARK":
                 case "SMALL":
-                    return false;
                 case "#text":
+                    return false;
                 case "DIV":
                 default:
                     return true;
@@ -436,8 +479,15 @@ namespace RichTextControls.Generators
         /// <returns></returns>
         protected Block AddInlineToTextBlock(BlockCollection blocks, Inline inline, Paragraph paragraph = null)
         {
-            //paragraph = paragraph ?? GetOrCreateLastParagraph(blocks);
-            paragraph = paragraph ?? new Paragraph();
+            if(startWithAnotherParagraph && paragraph == null)
+            {
+                paragraph = new Paragraph();
+            }
+            else
+            {
+                paragraph = paragraph ?? GetOrCreateLastParagraph(blocks);
+            }
+            //paragraph = paragraph ?? new Paragraph();
             paragraph.Inlines.Add(inline);
 
             //if (blocks.LastOrDefault() != paragraph)
@@ -518,12 +568,12 @@ namespace RichTextControls.Generators
 
         //    return stackPanel;
         //}
-
+        private bool startWithAnotherParagraph = false;
         private Paragraph GenerateParagraph(IHtmlParagraphElement node)
         {
             Paragraph paragraph = null;
             string attributeStyle = null;
-            if (node.HasAttribute("style"))
+            if (node.ClassName!="FirstInDiv" && node.ClassName != "FirstAndLastInDiv" && node.HasAttribute("style"))
             {
                 attributeStyle = node.Attributes["style"].Value;
             }
@@ -536,6 +586,10 @@ namespace RichTextControls.Generators
             {
                 paragraph = new Paragraph();
                 AddInlineChildren(node, paragraph.Inlines);
+            }
+            if (attributeStyle != "display: inline;")
+            {
+                startWithAnotherParagraph = true;
             }
             return paragraph;
         }
@@ -687,7 +741,14 @@ namespace RichTextControls.Generators
 
                 if (Uri.TryCreate(node.Href, UriKind.RelativeOrAbsolute, out Uri hrefUri))
                 {
-                    hyperlink.NavigateUri = hrefUri;
+                    try
+                    {
+                        hyperlink.NavigateUri = hrefUri;
+                    }
+                    catch(System.NullReferenceException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("超链接错误");
+                    }
                 }
 
                 // TODO: Add option for unfurling links as images
