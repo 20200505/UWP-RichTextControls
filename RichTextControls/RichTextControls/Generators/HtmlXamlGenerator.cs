@@ -156,6 +156,11 @@ namespace RichTextControls.Generators
                     return paragraph;
                 case "IMG":
                     Paragraph imgParagraph = new Paragraph();
+                    var imgNode = (IHtmlImageElement)node;
+                    if(imgNode.ClassName != "FirstInDiv" && imgNode.ClassName != "FirstAndLastInDiv" && imgNode.HasAttribute("style"))
+                    {
+                        startWithAnotherParagraph = true;
+                    }
                     InlineUIContainer inlineUIContainer = new InlineUIContainer();
                     inlineUIContainer.Child = GenerateImage(node as IHtmlImageElement);
                     imgParagraph.Inlines.Add(inlineUIContainer);
@@ -166,11 +171,11 @@ namespace RichTextControls.Generators
                     var previousNode = node.PreviousSibling;
                     if(previousNode is IHtmlParagraphElement)
                     {
-                        //if((previousNode as IHtmlParagraphElement).HasAttribute("style") 
-                        //    && (previousNode as IHtmlParagraphElement).Attributes["style"].Value == "display: inline;")
-                        //{
-                        //    treatAsInlineLink = true;
-                        //}
+                        if ((previousNode as IHtmlParagraphElement).HasAttribute("style")
+                            && (previousNode as IHtmlParagraphElement).Attributes["style"].Value == "display: inline;")
+                        {
+                            treatAsInlineLink = true;
+                        }
                         treatAsInlineLink = true;
                     }
                     if(treatAsInlineLink)
@@ -461,8 +466,16 @@ namespace RichTextControls.Generators
             {
                 var inline = GenerateInlineForNode(child, inlines);
 
-                if (inlines.LastOrDefault() != inline)
-                    inlines.Add(inline);
+                try
+                {
+                    if (inlines.LastOrDefault() != inline)
+                        inlines.Add(inline);
+                }
+                catch(ArgumentException exception)
+                {
+                    System.Diagnostics.Debug.WriteLine(exception.Message);
+                }
+
             }
             if(isInDiv)
             {
@@ -482,6 +495,7 @@ namespace RichTextControls.Generators
             if(startWithAnotherParagraph && paragraph == null)
             {
                 paragraph = new Paragraph();
+                startWithAnotherParagraph = false;
             }
             else
             {
