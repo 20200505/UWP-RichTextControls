@@ -157,7 +157,7 @@ namespace RichTextControls.Generators
                 case "IMG":
                     Paragraph imgParagraph = new Paragraph();
                     var imgNode = (IHtmlImageElement)node;
-                    if(imgNode.ClassName != "FirstInDiv" && imgNode.ClassName != "FirstAndLastInDiv" && imgNode.HasAttribute("style"))
+                    if(imgNode.ClassName == "FirstInDiv" || imgNode.ClassName == "FirstAndLastInDiv")
                     {
                         startWithAnotherParagraph = true;
                     }
@@ -379,7 +379,7 @@ namespace RichTextControls.Generators
                         var htmlNode = topNode as IHtmlElement;
                         if(preNode.ClassName == "LastInDiv" || preNode.ClassName =="FirstAndLastInDiv")
                         {
-                            if (htmlNode.ClassName == "LastInDiv")
+                            if (htmlNode.ClassName == "LastInDiv" || htmlNode.ClassName == "FirstAndLastInDiv")
                             {
                                 htmlNode.ClassName = "FirstAndLastInDiv";
                             }
