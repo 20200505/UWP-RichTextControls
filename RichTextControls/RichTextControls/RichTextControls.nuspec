@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Html2RichTextBlock.Hongjia</id>
+    <version>1.0</version>
+    <title>Html2RichTextBlock</title>
+    <authors>Kang Hongjia</authors>
+    <owners>Kang Hongjia</owners>
+    <licenseUrl>https://github.com/ryanvalentin/UWP-RichTextControls/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/XeonKHJ/UWP-RichTextControls</projectUrl>
+    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A control for displaying basic HTML as a RichTextBlock.</description>
+    <releaseNotes>altered and imporved from ryanvalentin's UWP-RichTextControls</releaseNotes>
+    <copyright>Copyright 2019</copyright>
+    <tags>Html Xaml RichTextBlock</tags>
+  </metadata>
+
+  <files>
+    <!-- WinMD and IntelliSense files-->
+    <file src="bin\Release\RichTextControls.xr.xml" target="lib\uap10.0"/>
+
+    <!-- XAML controls -->
+    <file src="Themes\Generic.xaml" target="lib\uap10.0\Themes"/>
+
+    <!-- DLLs and resources -->
+    <file src="bin\ARM\Release\RichTextControls.dll" target="runtimes\win10-arm\native"/>
+    <file src="bin\ARM\Release\RichTextControls.pri" target="runtimes\win10-arm\native"/>
+
+    <file src="bin\x64\Release\RichTextControls.dll" target="runtimes\win10-x64\native"/>
+    <file src="bin\x64\Release\RichTextControls.pri" target="runtimes\win10-x64\native"/>
+
+    <file src="bin\x86\Release\RichTextControls.dll" target="runtimes\win10-x86\native"/>
+    <file src="bin\x86\Release\RichTextControls.pri" target="runtimes\win10-x86\native"/>
+    
+    <!-- .targets -->
+    <file src="obj\RichTextControls.csproj.nuget.g.targets" target="build\native"></file>
+  </files>
+</package>
