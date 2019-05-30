@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Html2RichTextBlock.Hongjia</id>
+    <id>RichTextControls</id>
     <version>1.0</version>
     <title>Html2RichTextBlock</title>
     <authors>Kang Hongjia</authors>
@@ -14,26 +14,26 @@
     <releaseNotes>altered and imporved from ryanvalentin's UWP-RichTextControls</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>Html Xaml RichTextBlock</tags>
+
+    <dependencies>
+      <group targetFramework="uap10.0">
+        <dependency id="AngleSharp" version="0.9.9" />
+      </group>
+    </dependencies>
+    
   </metadata>
 
   <files>
     <!-- WinMD and IntelliSense files-->
-    <file src="bin\Release\RichTextControls.xr.xml" target="lib\uap10.0"/>
+    <file src="bin\Release\RichTextControls.xr.xml" target="lib\uap10.0\RichTextControls"/>
 
     <!-- XAML controls -->
-    <file src="Themes\Generic.xaml" target="lib\uap10.0\Themes"/>
+    <file src="bin\Release\Themes\Generic.xbf" target="lib\uap10.0\RichTextControls\Themes"/>
 
     <!-- DLLs and resources -->
-    <file src="bin\ARM\Release\RichTextControls.dll" target="runtimes\win10-arm\native"/>
-    <file src="bin\ARM\Release\RichTextControls.pri" target="runtimes\win10-arm\native"/>
-
-    <file src="bin\x64\Release\RichTextControls.dll" target="runtimes\win10-x64\native"/>
-    <file src="bin\x64\Release\RichTextControls.pri" target="runtimes\win10-x64\native"/>
-
-    <file src="bin\x86\Release\RichTextControls.dll" target="runtimes\win10-x86\native"/>
-    <file src="bin\x86\Release\RichTextControls.pri" target="runtimes\win10-x86\native"/>
-    
-    <!-- .targets -->
-    <file src="obj\RichTextControls.csproj.nuget.g.targets" target="build\native"></file>
+    <file src="bin\Release\RichTextControls.dll" target="lib\uap10.0\"/>
+    <file src="bin\Release\RichTextControls.pri" target="lib\uap10.0\"/>
+    <file src="bin\Release\RichTextControls.pdb" target="lib\uap10.0\"/>
   </files>
+
 </package>

@@ -8,8 +8,8 @@
     xmlns:richtextcontrols="using:RichTextControls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <ScrollViewer>
-        <Grid>
+
+        <Grid x:Name="testGrid">
             
             <StackPanel>
                 <Viewbox StretchDirection="DownOnly">
@@ -46,13 +46,21 @@
                         </DropDownButton>
                     </StackPanel>
                 </Viewbox>
-                <Grid  x:Name="TestGrid">
-                    <!--<richtextcontrols:HtmlTextBlock x:Name="htmlTest" Html="{x:Bind ReaderHtml}" Opacity="0"></richtextcontrols:HtmlTextBlock>-->
-                    <RichTextBlock x:Name="htmlTest" richtextcontrols:Properties.Html="{x:Bind Html}" x:DefaultBindMode="TwoWay"></RichTextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Viewbox  x:Name="TestGrid" Width="500" Height="500" Grid.Column="0" VerticalAlignment="Top">
+                        <!--<richtextcontrols:HtmlTextBlock x:Name="htmlTest" Html="{x:Bind ReaderHtml}" Opacity="0"></richtextcontrols:HtmlTextBlock>-->
+                        <RichTextBlock x:Name="htmlTest" Width="500" Height="500" richtextcontrols:Properties.Html="{x:Bind Html}" x:DefaultBindMode="TwoWay" SelectionChanged="HtmlTest_SelectionChanged" OverflowContentTarget="{Binding ElementName=fuckoff}" VerticalAlignment="Top"></RichTextBlock>
+                    </Viewbox>
+                    <RichTextBlockOverflow Grid.Column="1" x:Name="fuckoff"></RichTextBlockOverflow>
                 </Grid>
+
 
             </StackPanel>
         </Grid>
-    </ScrollViewer>
+
 
 </Page>

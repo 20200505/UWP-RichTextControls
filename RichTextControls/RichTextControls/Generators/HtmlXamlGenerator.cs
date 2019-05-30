@@ -679,7 +679,7 @@ namespace RichTextControls.Generators
                 StretchDirection = StretchDirection.DownOnly,
             };
 
-            viewBox.Child = image;
+             viewBox.Child = image;
 
             if (Uri.TryCreate(node.Source, UriKind.RelativeOrAbsolute, out Uri src))
             {

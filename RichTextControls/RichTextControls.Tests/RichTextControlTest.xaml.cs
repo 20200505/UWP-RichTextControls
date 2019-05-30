@@ -97,6 +97,55 @@ namespace RichTextControls.Tests
             htmlTest.FontSize = (FontSizeSlider.Value + 10) / 2;
         }
 
+        private void HtmlTest_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            Flyout flyout = new Flyout();
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = "翻译结果";
+            flyout.Content = textBlock;
+            //flyout.ShowAt(htmlTest, new FlyoutShowOptions
+            //{
+            //    Position = GetPointerPosition(),
+            //    ShowMode = FlyoutShowMode.Transient
+            //});
+        }
+
+
+        private Point GetPointerPosition()
+        {
+            var pointerPosition = Windows.UI.Core.CoreWindow.GetForCurrentThread().PointerPosition;
+
+            if (pointerPosition.X > Window.Current.Bounds.Right)
+            {
+                pointerPosition.X = Window.Current.Bounds.Right;
+            }
+            else if (pointerPosition.X < Window.Current.Bounds.Left)
+            {
+                pointerPosition.X = Window.Current.Bounds.Left;
+            }
+
+            if (pointerPosition.Y > Window.Current.Bounds.Bottom)
+            {
+                pointerPosition.Y = Window.Current.Bounds.Bottom;
+            }
+            else if (pointerPosition.Y < Window.Current.Bounds.Top)
+            {
+                pointerPosition.Y = Window.Current.Bounds.Top;
+            }
+
+
+            var x = pointerPosition.X - Window.Current.Bounds.X;
+            var y = pointerPosition.Y - Window.Current.Bounds.Y;
+
+
+            var ttv = testGrid.TransformToVisual(Window.Current.Content);
+            Point screenCoords = ttv.TransformPoint(new Point(0, 0));
+
+            x -= screenCoords.X;
+            y -= screenCoords.Y + 10;
+
+            return new Point(x, y);
+        }
         //public string Convert(string Html)
         //{
         //    var sb = new StringBuilder();
