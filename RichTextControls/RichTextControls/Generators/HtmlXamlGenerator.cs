@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +66,7 @@ namespace RichTextControls.Generators
             if (_parser == null && _document == null)
                 throw new InvalidOperationException("No HTML parser was set. If this is a subclass you must instantiate the parent with `base()`.");
 
-            _document = _document ?? _parser.Parse(_html);
+            _document = _document ?? _parser.ParseDocument(_html);
 
             richTextBlock = new RichTextBlock();
 
@@ -143,7 +143,7 @@ namespace RichTextControls.Generators
         /// <returns>The <see cref="UIElement"/> to be appended to the parent.</returns>
         protected virtual Block GenerateBlockForNode(INode node, BlockCollection elements)
         {
-            Block lastBlock = null;
+            //Block lastBlock = null;
             switch (node.NodeName)
             {
                 case "S":
@@ -346,7 +346,7 @@ namespace RichTextControls.Generators
                     {
                         if (topNode.ChildNodes.FirstOrDefault() is IHtmlElement)
                         {
-                            string attributeStyle = null;
+                            //string attributeStyle = null;
                             IHtmlElement paragraphElement = (IHtmlElement)topNode.ChildNodes.FirstOrDefault();
                             paragraphElement.ClassName = "FirstInDiv";
                         }
