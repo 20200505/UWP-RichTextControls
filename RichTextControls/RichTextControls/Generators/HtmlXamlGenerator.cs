@@ -670,13 +670,14 @@ namespace RichTextControls.Generators
         {
             var image = new Image()
             {
-                //Stretch = Stretch.UniformToFill
+                HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center
             };
 
             var viewBox = new Viewbox()
             {
                 Stretch = Stretch.UniformToFill,
                 StretchDirection = StretchDirection.DownOnly,
+                HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center
             };
 
              viewBox.Child = image;
@@ -685,16 +686,6 @@ namespace RichTextControls.Generators
             {
                 var bitmap = new BitmapImage(src);
                 image.Source = bitmap;
-                //image.Width = node.DisplayWidth == 0 ? node.OriginalWidth : node.DisplayWidth;
-                //if(image.Width == 0)
-                //{
-                //    image.Width = bitmap.PixelWidth;
-                //}
-                //image.Height = node.DisplayHeight == 0 ? node.OriginalHeight : node.DisplayHeight;
-                //if(image.Height == 0)
-                //{
-                //    image.Height = bitmap.PixelHeight;
-                //}
             }
 
             return viewBox;
